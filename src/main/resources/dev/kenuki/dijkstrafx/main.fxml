@@ -1,16 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
-
 <?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="dev.kenuki.dijkstrafx.MainPageController">
-  <padding>
-    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-  </padding>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-  <Label fx:id="welcomeText"/>
-  <Button text="Hello!" onAction="#onHelloButtonClick"/>
-</VBox>
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="506.0" prefWidth="703.0" style="-fx-background-color: #16171b;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.kenuki.dijkstrafx.frontend.MainPageController">
+   <children>
+      <VBox alignment="CENTER" prefHeight="506.0" prefWidth="266.0" style="-fx-background-radius: 50; -fx-background-color: #202124;" HBox.hgrow="SOMETIMES">
+         <children>
+            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="DijkstraFX" wrappingWidth="180.15625">
+               <font>
+                  <Font name="Bauhaus 93" size="40.0" />
+               </font>
+            </Text>
+            <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Current mode:">
+               <font>
+                  <Font name="Agency FB" size="30.0" />
+               </font>
+            </Text>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <VBox fx:id="styleClear" alignment="CENTER" onMouseClicked="#onStyleClearClicked" HBox.hgrow="NEVER">
+                     <children>
+                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#16171b" height="50.0" stroke="BLACK" strokeType="INSIDE" width="50.0" />
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Clear" textAlignment="CENTER" wrappingWidth="41.0068359375" VBox.vgrow="ALWAYS">
+                           <font>
+                              <Font name="Agency FB" size="22.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </VBox>
+                  <VBox fx:id="styleWall" alignment="CENTER" onMouseClicked="#onStyleWallClicked" HBox.hgrow="NEVER">
+                     <children>
+                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="WHITE" height="50.0" stroke="BLACK" strokeType="INSIDE" width="50.0" />
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Wall" textAlignment="CENTER" wrappingWidth="36.14453125">
+                           <font>
+                              <Font name="Agency FB" size="22.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </VBox>
+                  <VBox fx:id="styleStart" alignment="CENTER" onMouseClicked="#onStyleStartClicked" HBox.hgrow="NEVER">
+                     <children>
+                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#6cff00" height="50.0" stroke="BLACK" strokeType="INSIDE" width="50.0" />
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Start" textAlignment="CENTER" wrappingWidth="42.900390625">
+                           <font>
+                              <Font name="Agency FB" size="22.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </VBox>
+                  <VBox fx:id="styleFinish" alignment="CENTER" onMouseClicked="#onStyleFinishClicked" HBox.hgrow="NEVER">
+                     <children>
+                        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#ff4949" height="50.0" stroke="BLACK" strokeType="INSIDE" width="50.0" />
+                        <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="Finish" textAlignment="CENTER" wrappingWidth="46.8427734375">
+                           <font>
+                              <Font name="Agency FB" size="22.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <Button mnemonicParsing="false" onAction="#onSearchBtnClicked" style="-fx-background-radius: 50; -fx-background-color: #01b075;" text="Search!" textFill="WHITE">
+               <font>
+                  <Font name="Agency FB" size="40.0" />
+               </font>
+            </Button>
+         </children>
+         <HBox.margin>
+            <Insets bottom="10.0" left="10.0" right="5.0" top="10.0" />
+         </HBox.margin>
+      </VBox>
+      <AnchorPane fx:id="body" prefHeight="200.0" prefWidth="200.0" style="-fx-border-insets: 0; -fx-border-radius: 5; -fx-border-color: #FFFFFF; -fx-background-color: #16171b;" HBox.hgrow="ALWAYS">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <HBox.margin>
+            <Insets bottom="10.0" left="5.0" right="10.0" top="10.0" />
+         </HBox.margin>
+      </AnchorPane>
+   </children>
+</HBox>
