@@ -34,7 +34,7 @@ public class MainPageController {
     private void onAutoPlayBtnClicked() {
         if(autoPlayBtn.getStyle().contains("#01b075")) {
             nowAutoPlay = true;
-            autoPlayBtn.setStyle("-fx-background-radius:50;-fx-background-color:#FF0000");
+            autoPlayBtn.setStyle("-fx-background-radius:50;-fx-background-color:#ea5645");
             Thread autoPlay = new Thread(() -> {
                 while (nowAutoPlay) {
                     engine.nextIteration();
