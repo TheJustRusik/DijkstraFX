@@ -1,8 +1,13 @@
 package dev.kenuki.dijkstrafx.frontend;
 
+import dev.kenuki.dijkstrafx.backend.Engine;
+import dev.kenuki.dijkstrafx.backend.algorithm.BFS;
 import dev.kenuki.dijkstrafx.util.Block;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.layout.*;
+
+import java.util.Arrays;
 
 public class MainPageController {
     @FXML
@@ -16,8 +21,38 @@ public class MainPageController {
     @FXML
     private VBox styleFinish;
     @FXML
-    private void onSearchBtnClicked() {
-        fieldController.lockDrawing();
+    private Button playBtn;
+    @FXML
+    private Button nextBtn;
+    private final int ROWS = 20, COLUMNS = 20, SIZE = 25;
+    private Engine engine;
+    @FXML
+    private void onNextBtnClicked() {
+        engine.nextIteration();
+        fieldController.updateFrame();
+    }
+
+    @FXML
+    private void onSearchBtnClicked() throws Exception {
+        if(playBtn.getText().equals("Search!")) {
+            playBtn.setText("Restart!");
+            nextBtn.setVisible(true);
+            fieldController.lockDrawing();
+            engine = new Engine(fieldController.gameField, fieldController.getStartCell(), fieldController.getFinishCell());
+            engine.launch();
+        } else {
+            body.getChildren().clear();
+            nextBtn.setVisible(false);
+            fieldController = new FieldController(ROWS,COLUMNS,SIZE);
+            GridPane field = fieldController.getField();
+            AnchorPane.setTopAnchor(field, 0.0);
+            AnchorPane.setBottomAnchor(field, 0.0);
+            AnchorPane.setLeftAnchor(field, 0.0);
+            AnchorPane.setRightAnchor(field, 0.0);
+            body.getChildren().add(field);
+
+            playBtn.setText("Search!");
+        }
     }
     @FXML
     private void onStyleClearClicked() {
@@ -62,7 +97,7 @@ public class MainPageController {
 
     public void initialize() {
 
-        fieldController = new FieldController(50,50,10);//Good combinations: 50,50,10 | 20,20,25 | 10,10,50
+        fieldController = new FieldController(ROWS,COLUMNS,SIZE);//Good combinations: 50,50,10 | 20,20,25 | 10,10,50
         GridPane field = fieldController.getField();
         onStyleWallClicked();
 

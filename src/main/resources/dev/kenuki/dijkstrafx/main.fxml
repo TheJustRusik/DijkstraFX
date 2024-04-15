@@ -9,7 +9,6 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
 <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="506.0" prefWidth="703.0" style="-fx-background-color: #16171b;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dev.kenuki.dijkstrafx.frontend.MainPageController">
    <children>
       <VBox alignment="CENTER" prefHeight="506.0" prefWidth="266.0" style="-fx-background-radius: 50; -fx-background-color: #202124;" HBox.hgrow="SOMETIMES">
@@ -68,10 +67,18 @@
                   </VBox>
                </children>
             </HBox>
-            <Button mnemonicParsing="false" onAction="#onSearchBtnClicked" style="-fx-background-radius: 50; -fx-background-color: #01b075;" text="Search!" textFill="WHITE">
+            <Button fx:id="playBtn" mnemonicParsing="false" onAction="#onSearchBtnClicked" style="-fx-background-radius: 50; -fx-background-color: #01b075;" text="Search!" textFill="WHITE">
                <font>
                   <Font name="Agency FB" size="40.0" />
                </font>
+            </Button>
+            <Button fx:id="nextBtn" mnemonicParsing="false" onAction="#onNextBtnClicked" style="-fx-background-radius: 50; -fx-background-color: #01b075;" text="Next" textFill="WHITE" visible="false">
+               <font>
+                  <Font name="Agency FB" size="25.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
             </Button>
          </children>
          <HBox.margin>

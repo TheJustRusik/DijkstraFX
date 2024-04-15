@@ -5,5 +5,6 @@ public enum Block {
     AIR,
     START,
     FINISH,
-    ROAD
+    ROAD,
+    CHECKED
 }
