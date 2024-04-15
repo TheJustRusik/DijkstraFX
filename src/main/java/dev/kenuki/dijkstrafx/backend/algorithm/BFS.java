@@ -12,7 +12,7 @@ import java.util.concurrent.CountDownLatch;
 public class BFS {
     private final int[] dx = {1, -1, 0, 0};
     private final int[] dy = {0, 0, 1, -1};
-    public List<Cell> shortestPath(CountDownLatch latch, Block[][] maze, Cell start, Cell end) throws Exception {
+    public List<Cell> shortestPath(Object lock, Block[][] maze, Cell start, Cell end) throws Exception {
         if(maze == null || start == null || end == null)
             throw new Exception("RRRRAAAAAAAAHHHHHHHHH");
 
@@ -40,7 +40,11 @@ public class BFS {
 
                 if (isValid(nx, ny, rows, cols) && maze[ny][nx] != Block.WALL && !visited[ny][nx]) {
                     visited[ny][nx] = true;
-                    latch.await();
+                    //WAIT HERE
+                    synchronized (lock) {
+                        lock.wait();
+                    }
+
                     maze[ny][nx] = Block.CHECKED;
                     parent[ny][nx] = current;
                     queue.add(new Cell(nx, ny));
@@ -50,7 +54,10 @@ public class BFS {
 
         List<Cell> path = new ArrayList<>();
         for (Cell at = end; at != null; at = parent[at.y][at.x]) {
-            latch.await();
+            synchronized (lock) {
+                lock.wait();
+            }
+
             maze[at.y][at.x] = Block.ROAD;
 
             path.add(at);

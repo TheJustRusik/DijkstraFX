@@ -24,8 +24,34 @@ public class MainPageController {
     private Button playBtn;
     @FXML
     private Button nextBtn;
+    @FXML
+    private Button autoPlayBtn;
+
     private final int ROWS = 20, COLUMNS = 20, SIZE = 25;
     private Engine engine;
+    private boolean nowAutoPlay = false;
+    @FXML
+    private void onAutoPlayBtnClicked() {
+        if(autoPlayBtn.getStyle().contains("#01b075")) {
+            nowAutoPlay = true;
+            autoPlayBtn.setStyle("-fx-background-radius:50;-fx-background-color:#FF0000");
+            Thread autoPlay = new Thread(() -> {
+                while (nowAutoPlay) {
+                    engine.nextIteration();
+                    fieldController.updateFrame();
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+            autoPlay.start();
+        }else {
+            autoPlayBtn.setStyle("-fx-background-radius:50;-fx-background-color:#01b075");
+            nowAutoPlay = false;
+        }
+    }
     @FXML
     private void onNextBtnClicked() {
         engine.nextIteration();
@@ -37,12 +63,14 @@ public class MainPageController {
         if(playBtn.getText().equals("Search!")) {
             playBtn.setText("Restart!");
             nextBtn.setVisible(true);
+            autoPlayBtn.setVisible(true);
             fieldController.lockDrawing();
             engine = new Engine(fieldController.gameField, fieldController.getStartCell(), fieldController.getFinishCell());
             engine.launch();
         } else {
             body.getChildren().clear();
             nextBtn.setVisible(false);
+            autoPlayBtn.setVisible(false);
             fieldController = new FieldController(ROWS,COLUMNS,SIZE);
             GridPane field = fieldController.getField();
             AnchorPane.setTopAnchor(field, 0.0);

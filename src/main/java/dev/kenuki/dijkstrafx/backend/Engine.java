@@ -7,30 +7,31 @@ import dev.kenuki.dijkstrafx.util.Cell;
 import java.util.concurrent.CountDownLatch;
 
 public class Engine {
-    private CountDownLatch latch;
+    private Object lock;
     private Block[][] maze;
     private Cell start;
     private Cell finish;
     public Engine(Block[][] maze, Cell start, Cell finish){
-        latch = new CountDownLatch(1);
+        lock = new Object();
         this.maze = maze;
         this.start = start;
         this.finish = finish;
     }
     public void launch() {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                BFS bfs = new BFS();
-                try {
-                    bfs.shortestPath(latch, maze, start, finish);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+        Thread thread = new Thread(() -> {
+            BFS bfs = new BFS();
+            try {
+                bfs.shortestPath(lock, maze, start, finish);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         });
+        thread.start();
     }
     public void nextIteration() {
-        latch.countDown();
+        synchronized (lock) {
+            lock.notify();
+        }
+
     }
 }
