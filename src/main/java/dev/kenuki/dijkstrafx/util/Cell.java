@@ -1,5 +1,4 @@
 package dev.kenuki.dijkstrafx.util;
-
 public class Cell {
     public int x, y;
 

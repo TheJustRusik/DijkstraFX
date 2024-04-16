@@ -1,12 +1,8 @@
 package dev.kenuki.dijkstrafx.frontend;
 
-import dev.kenuki.dijkstrafx.util.Block;
-import dev.kenuki.dijkstrafx.util.Cell;
-import dev.kenuki.dijkstrafx.util.GridRectangle;
+import dev.kenuki.dijkstrafx.util.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 
 public class FieldController {
@@ -14,8 +10,8 @@ public class FieldController {
     private final Color airColor = Color.web("#16171b");
     private final Color startColor = Color.web("#6cff00");
     private final Color finishColor = Color.web("#ff4949");
-    private final Color roadColor = Color.web("#ff00ff");
-    private final Color checkedColor = Color.AQUA;
+    private final Color roadColor = Color.ORANGE;
+    private final Color checkedColor = Color.rgb(0, 255,255, 0.2);
 
     private Block currentPen;
     private GridRectangle startCell;
@@ -70,6 +66,7 @@ public class FieldController {
                         if (tmp == startCell) {
                             startCell.setStrokeWidth(1);
                             startCell = null;
+
                         }
                         else if(tmp == finishCell) {
                             finishCell.setStrokeWidth(1);
@@ -102,6 +99,7 @@ public class FieldController {
                             finishCell = null;
                         }
                         if(startCell != null) {
+                            gameField[startCell.y][startCell.y] = Block.AIR;
                             startCell.setStrokeWidth(1);
                             startCell.setFill(airColor);
                         }
@@ -116,6 +114,7 @@ public class FieldController {
                             startCell = null;
                         }
                         if(finishCell != null) {
+                            gameField[finishCell.y][finishCell.y] = Block.AIR;
                             finishCell.setStrokeWidth(1);
                             finishCell.setFill(airColor);
                         }
@@ -145,12 +144,7 @@ public class FieldController {
             }
         }
     }
-    public int getWidth() {
-        return width;
-    }
-    public int getHeight() {
-        return height;
-    }
+
     public void lockDrawing() {
         canDraw = false;
     }

@@ -7,12 +7,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 public class BFS {
     private final int[] dx = {1, -1, 0, 0};
     private final int[] dy = {0, 0, 1, -1};
-    public List<Cell> shortestPath(Object lock, Block[][] maze, Cell start, Cell end) throws Exception {
+    public void shortestPath(Object lock, Block[][] maze, Cell start, Cell end) throws Exception {
         if(maze == null || start == null || end == null)
             throw new Exception("RRRRAAAAAAAAHHHHHHHHH");
 
@@ -44,9 +43,10 @@ public class BFS {
                     synchronized (lock) {
                         lock.wait();
                     }
-
-                    maze[ny][nx] = Block.CHECKED;
+                    if(maze[ny][nx] != Block.START && maze[ny][nx] != Block.FINISH )
+                        maze[ny][nx] = Block.CHECKED;
                     parent[ny][nx] = current;
+
                     queue.add(new Cell(nx, ny));
                 }
             }
@@ -57,14 +57,13 @@ public class BFS {
             synchronized (lock) {
                 lock.wait();
             }
-
-            maze[at.y][at.x] = Block.ROAD;
+            if(maze[at.y][at.x] != Block.START && maze[at.y][at.x] != Block.FINISH )
+                maze[at.y][at.x] = Block.ROAD;
 
             path.add(at);
         }
         Collections.reverse(path);
-
-        return path;
+        System.out.println("END");
     }
     private boolean isValid(int x, int y, int rows, int cols) {
         return x >= 0 && x < rows && y >= 0 && y < cols;

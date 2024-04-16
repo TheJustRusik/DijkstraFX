@@ -4,13 +4,12 @@ import dev.kenuki.dijkstrafx.backend.algorithm.BFS;
 import dev.kenuki.dijkstrafx.util.Block;
 import dev.kenuki.dijkstrafx.util.Cell;
 
-import java.util.concurrent.CountDownLatch;
-
 public class Engine {
-    private Object lock;
-    private Block[][] maze;
-    private Cell start;
-    private Cell finish;
+    private final Object lock;
+    private final Block[][] maze;
+    private final Cell start;
+    private final Cell finish;
+
     public Engine(Block[][] maze, Cell start, Cell finish){
         lock = new Object();
         this.maze = maze;

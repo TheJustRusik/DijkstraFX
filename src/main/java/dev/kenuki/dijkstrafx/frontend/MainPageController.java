@@ -1,13 +1,15 @@
 package dev.kenuki.dijkstrafx.frontend;
 
 import dev.kenuki.dijkstrafx.backend.Engine;
-import dev.kenuki.dijkstrafx.backend.algorithm.BFS;
 import dev.kenuki.dijkstrafx.util.Block;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.layout.*;
-
-import java.util.Arrays;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 public class MainPageController {
     @FXML
@@ -26,30 +28,24 @@ public class MainPageController {
     private Button nextBtn;
     @FXML
     private Button autoPlayBtn;
-
-    private final int ROWS = 20, COLUMNS = 20, SIZE = 25;
+    private final int ROWS = 50, COLUMNS = 50, SIZE = 10;
     private Engine engine;
-    private boolean nowAutoPlay = false;
+    private Timeline autoPlay;
     @FXML
     private void onAutoPlayBtnClicked() {
         if(autoPlayBtn.getStyle().contains("#01b075")) {
-            nowAutoPlay = true;
             autoPlayBtn.setStyle("-fx-background-radius:50;-fx-background-color:#ea5645");
-            Thread autoPlay = new Thread(() -> {
-                while (nowAutoPlay) {
-                    engine.nextIteration();
-                    fieldController.updateFrame();
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
-            autoPlay.start();
+            Duration duration = new Duration(16);
+            autoPlay = new Timeline(new KeyFrame(duration, actionEvent -> {
+                engine.nextIteration();
+                fieldController.updateFrame();
+            }));
+            autoPlay.setCycleCount(Timeline.INDEFINITE);
+            autoPlay.play();
+
         }else {
             autoPlayBtn.setStyle("-fx-background-radius:50;-fx-background-color:#01b075");
-            nowAutoPlay = false;
+            autoPlay.stop();
         }
     }
     @FXML
@@ -124,7 +120,6 @@ public class MainPageController {
 
 
     public void initialize() {
-
         fieldController = new FieldController(ROWS,COLUMNS,SIZE);//Good combinations: 50,50,10 | 20,20,25 | 10,10,50
         GridPane field = fieldController.getField();
         onStyleWallClicked();
