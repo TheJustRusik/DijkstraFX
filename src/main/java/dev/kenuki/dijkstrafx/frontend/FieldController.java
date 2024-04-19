@@ -44,7 +44,17 @@ public class FieldController {
         field = new GridPane();
         rectangleMatrix = new GridRectangle[rows][columns];
         gameField = new Block[rows][columns];
+        field.setOnMouseDragged(mouseEvent -> {
 
+            try {
+                int y = (int) Math.floor(mouseEvent.getY() / cellSize);
+                int x = (int) Math.floor(mouseEvent.getX() / cellSize);
+                if (canDraw)
+                    draw(rectangleMatrix[y][x]);
+            }catch (Exception ignored) {
+
+            }
+        });
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {
                 rectangleMatrix[row][col] = new GridRectangle(col, row, cellSize, cellSize, airColor);
@@ -59,69 +69,7 @@ public class FieldController {
                     if (!canDraw) {
                         return;
                     }
-
-                    if (currentPen == Block.AIR) {
-                        gameField[tmp.y][tmp.x] = Block.AIR;
-
-                        if (tmp == startCell) {
-                            startCell.setStrokeWidth(1);
-                            startCell = null;
-
-                        }
-                        else if(tmp == finishCell) {
-                            finishCell.setStrokeWidth(1);
-                            finishCell = null;
-                        }
-
-                        tmp.setFill(airColor);
-                        tmp.setStrokeWidth(1);
-                    }else if (currentPen == Block.WALL) {
-
-                        gameField[tmp.y][tmp.x] = Block.WALL;
-
-                        if (tmp == startCell) {
-                            startCell.setStrokeWidth(1);
-                            startCell = null;
-                        }
-                        else if(tmp == finishCell) {
-                            finishCell.setStrokeWidth(1);
-                            finishCell = null;
-                        }
-
-                        tmp.setFill(wallColor);
-                        tmp.setStrokeWidth(0);
-                        System.out.println("WALL AT: y:" + tmp.y + " x:" + tmp.x);
-                    } else if (currentPen == Block.START) {
-
-                        gameField[tmp.y][tmp.x] = Block.START;
-                        if(finishCell == tmp) {
-                            finishCell.setStrokeWidth(1);
-                            finishCell = null;
-                        }
-                        if(startCell != null) {
-                            gameField[startCell.y][startCell.y] = Block.AIR;
-                            startCell.setStrokeWidth(1);
-                            startCell.setFill(airColor);
-                        }
-                        startCell = tmp;
-                        tmp.setFill(startColor);
-                        tmp.setStrokeWidth(0);
-                    } else if (currentPen == Block.FINISH) {
-
-                        gameField[tmp.y][tmp.x] = Block.FINISH;
-                        if (startCell == tmp) {
-                            startCell.setStrokeWidth(1);
-                            startCell = null;
-                        }
-                        if(finishCell != null) {
-                            gameField[finishCell.y][finishCell.y] = Block.AIR;
-                            finishCell.setStrokeWidth(1);
-                            finishCell.setFill(airColor);
-                        }
-                        finishCell = tmp;
-                        tmp.setFill(finishColor);
-                        tmp.setStrokeWidth(0);
-                    }
+                    draw(tmp);
                 });
             }
         }
@@ -147,5 +95,77 @@ public class FieldController {
 
     public void lockDrawing() {
         canDraw = false;
+    }
+
+    private void draw(GridRectangle rect) {
+        if (currentPen == Block.AIR) {
+            gameField[rect.y][rect.x] = Block.AIR;
+
+            if (rect == startCell) {
+                startCell.setStrokeWidth(1);
+                startCell = null;
+
+            }
+            else if(rect == finishCell) {
+                finishCell.setStrokeWidth(1);
+                finishCell = null;
+            }
+
+            rect.setFill(airColor);
+            rect.setStrokeWidth(1);
+        }else if (currentPen == Block.WALL) {
+
+            gameField[rect.y][rect.x] = Block.WALL;
+
+            if (rect == startCell) {
+                startCell.setStrokeWidth(1);
+                startCell = null;
+            }
+            else if(rect == finishCell) {
+                finishCell.setStrokeWidth(1);
+                finishCell = null;
+            }
+
+            rect.setFill(wallColor);
+            rect.setStrokeWidth(0);
+        } else if (currentPen == Block.START) {
+
+
+            if(finishCell == rect) {
+                System.out.println("Filled finish with start");
+                gameField[finishCell.y][finishCell.x] = Block.AIR;
+                finishCell.setStrokeWidth(1);
+                finishCell = null;
+            }
+            if(startCell != null) {
+                System.out.println("Start was, but we set it again");
+                gameField[startCell.y][startCell.x] = Block.AIR;
+                startCell.setStrokeWidth(1);
+                startCell.setFill(airColor);
+            }
+            startCell = rect;
+            gameField[startCell.y][startCell.x] = Block.START;
+            rect.setFill(startColor);
+            rect.setStrokeWidth(0);
+        } else if (currentPen == Block.FINISH) {
+
+
+            if (startCell == rect) {
+                System.out.println("Filled start with finish");
+                gameField[startCell.y][startCell.x] = Block.AIR;
+                startCell.setStrokeWidth(1);
+                startCell = null;
+            }
+            if(finishCell != null) {
+                System.out.println("Finish was but we set it again");
+                gameField[finishCell.y][finishCell.x] = Block.AIR;
+                finishCell.setStrokeWidth(1);
+                finishCell.setFill(airColor);
+            }
+            finishCell = rect;
+            gameField[finishCell.y][finishCell.x] = Block.FINISH;
+            rect.setFill(finishColor);
+            rect.setStrokeWidth(0);
+        }
     }
 }
