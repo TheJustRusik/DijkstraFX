@@ -1,5 +1,6 @@
-package dev.kenuki.dijkstrafx.backend.algorithm;
+package dev.kenuki.dijkstrafx.backend.algorithms.implementation;
 
+import dev.kenuki.dijkstrafx.backend.algorithms.Algorithm;
 import dev.kenuki.dijkstrafx.util.Block;
 import dev.kenuki.dijkstrafx.util.Cell;
 
@@ -8,21 +9,17 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BFS {
-    private final int[] dx = {1, -1, 0, 0};
-    private final int[] dy = {0, 0, 1, -1};
-    public void shortestPath(Object lock, Block[][] maze, Cell start, Cell end) throws Exception {
-        if(maze == null || start == null || end == null)
-            throw new Exception("RRRRAAAAAAAAHHHHHHHHH");
-
+public class BFS extends Algorithm {
+    @Override
+    public void shortestPath(Object lock, Block[][] maze, Cell start, Cell end) {
+        assert (maze != null && start != null && end != null);
 
         int rows = maze.length;
         int cols = maze[0].length;
-
         boolean[][] visited = new boolean[rows][cols];
         Cell[][] parent = new Cell[rows][cols];
-
         LinkedList<Cell> queue = new LinkedList<>();
+
         visited[start.y][start.x] = true;
         queue.add(start);
 
@@ -41,7 +38,11 @@ public class BFS {
                     visited[ny][nx] = true;
                     //WAIT HERE
                     synchronized (lock) {
-                        lock.wait();
+                        try {
+                            lock.wait();
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                     if(maze[ny][nx] != Block.START && maze[ny][nx] != Block.FINISH )
                         maze[ny][nx] = Block.CHECKED;
@@ -55,7 +56,11 @@ public class BFS {
         List<Cell> path = new ArrayList<>();
         for (Cell at = end; at != null; at = parent[at.y][at.x]) {
             synchronized (lock) {
-                lock.wait();
+                try {
+                    lock.wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
             if(maze[at.y][at.x] != Block.START && maze[at.y][at.x] != Block.FINISH )
                 maze[at.y][at.x] = Block.ROAD;
@@ -65,8 +70,6 @@ public class BFS {
         Collections.reverse(path);
         System.out.println("END");
     }
-    private boolean isValid(int x, int y, int rows, int cols) {
-        return x >= 0 && x < rows && y >= 0 && y < cols;
-    }
+
 
 }

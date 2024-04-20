@@ -45,7 +45,6 @@ public class FieldController {
         rectangleMatrix = new GridRectangle[rows][columns];
         gameField = new Block[rows][columns];
         field.setOnMouseDragged(mouseEvent -> {
-
             try {
                 int y = (int) Math.floor(mouseEvent.getY() / cellSize);
                 int x = (int) Math.floor(mouseEvent.getX() / cellSize);
@@ -92,7 +91,12 @@ public class FieldController {
             }
         }
     }
-
+    public int getWidth() {
+        return width;
+    }
+    public int getHeight() {
+        return height;
+    }
     public void lockDrawing() {
         canDraw = false;
     }

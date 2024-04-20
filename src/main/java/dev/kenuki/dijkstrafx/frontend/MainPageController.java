@@ -1,15 +1,23 @@
 package dev.kenuki.dijkstrafx.frontend;
 
 import dev.kenuki.dijkstrafx.backend.Engine;
+import dev.kenuki.dijkstrafx.util.AlgoTypes;
 import dev.kenuki.dijkstrafx.util.Block;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+
+import java.util.Random;
 
 public class MainPageController {
     @FXML
@@ -28,14 +36,22 @@ public class MainPageController {
     private Button nextBtn;
     @FXML
     private Button autoPlayBtn;
-    private final int ROWS = 50, COLUMNS = 50, SIZE = 10;
+    @FXML
+    private ChoiceBox<Integer> choiceBox;
+    @FXML
+    private Button randomBtn;
+    @FXML
+    private Button clearBtn;
+    @FXML
+    private Slider animationSlider;
+    private int ROWS = 20, COLUMNS = 20, SIZE = 25;
     private Engine engine;
     private Timeline autoPlay;
     @FXML
     private void onAutoPlayBtnClicked() {
         if(autoPlayBtn.getStyle().contains("#01b075")) {
             autoPlayBtn.setStyle("-fx-background-radius:50;-fx-background-color:#ea5645");
-            Duration duration = new Duration(16);
+            Duration duration = new Duration(animationSlider.getValue());
             autoPlay = new Timeline(new KeyFrame(duration, actionEvent -> {
                 engine.nextIteration();
                 fieldController.updateFrame();
@@ -49,31 +65,50 @@ public class MainPageController {
         }
     }
     @FXML
+    private void onAnimationDelayChanged() {
+        try {
+            autoPlay.stop();
+            Duration duration = new Duration(animationSlider.getValue());
+            autoPlay = new Timeline(new KeyFrame(duration, actionEvent -> {
+                engine.nextIteration();
+                fieldController.updateFrame();
+            }));
+            autoPlay.setCycleCount(Timeline.INDEFINITE);
+            autoPlay.play();
+        }catch (Exception ignored) {
+
+        }
+
+    }
+    @FXML
     private void onNextBtnClicked() {
-        engine.nextIteration();
-        fieldController.updateFrame();
+        if(engine.hasNextIteration()) {
+            engine.nextIteration();
+            fieldController.updateFrame();
+        }
     }
 
     @FXML
-    private void onSearchBtnClicked() throws Exception {
+    private void onSearchBtnClicked() {
         if(playBtn.getText().equals("Search!")) {
+            choiceBox.setDisable(true);
+            randomBtn.setDisable(true);
+            clearBtn.setDisable(true);
             playBtn.setText("Restart!");
             nextBtn.setVisible(true);
             autoPlayBtn.setVisible(true);
             fieldController.lockDrawing();
-            engine = new Engine(fieldController.gameField, fieldController.getStartCell(), fieldController.getFinishCell());
+            engine = new Engine(fieldController.gameField, fieldController.getStartCell(), fieldController.getFinishCell(), AlgoTypes.BFS);
             engine.launch();
         } else {
-            body.getChildren().clear();
+            fieldSetup();
+            autoPlay.stop();
+            autoPlayBtn.setStyle("-fx-background-radius:50;-fx-background-color:#01b075");
             nextBtn.setVisible(false);
+            choiceBox.setDisable(false);
             autoPlayBtn.setVisible(false);
-            fieldController = new FieldController(ROWS,COLUMNS,SIZE);
-            GridPane field = fieldController.getField();
-            AnchorPane.setTopAnchor(field, 0.0);
-            AnchorPane.setBottomAnchor(field, 0.0);
-            AnchorPane.setLeftAnchor(field, 0.0);
-            AnchorPane.setRightAnchor(field, 0.0);
-            body.getChildren().add(field);
+            randomBtn.setDisable(false);
+            clearBtn.setDisable(false);
 
             playBtn.setText("Search!");
         }
@@ -114,12 +149,50 @@ public class MainPageController {
 
         fieldController.setCurrentPen(Block.FINISH);
     }
+    @FXML
+    private void onClearBtnClicked() {
+        for(int i = 0; i < fieldController.getHeight(); i++)
+            for(int j = 0; j < fieldController.getWidth(); j++)
+                fieldController.gameField[i][j] = Block.AIR;
+        fieldController.updateFrame();
+    }
+    @FXML
+    private void onRandomBtnClicked() {
+        Random random = new Random(System.currentTimeMillis());
+        for(int i = 0; i < fieldController.getHeight(); i++) {
+            for(int j = 0; j < fieldController.getWidth(); j++) {
+                fieldController.gameField[i][j] = Block.AIR;
+                if (random.nextInt(1,10) > 6) {
+                    fieldController.gameField[i][j] = Block.WALL;
+                }
+            }
+        }
+        fieldController.updateFrame();
+    }
 
 
     private FieldController fieldController;
 
 
     public void initialize() {
+        animationSlider.valueProperty().addListener((observable, oldValue, newValue) -> onAnimationDelayChanged());
+        ObservableList<Integer> choices = FXCollections.observableArrayList(5, 10, 20, 50 );
+        choiceBox.setItems(choices);
+        choiceBox.setValue(20);
+        choiceBox.setOnAction(event -> {
+            ROWS = choiceBox.getValue();
+            COLUMNS = choiceBox.getValue();
+            SIZE = 500 / choiceBox.getValue();
+            nextBtn.setVisible(false);
+            autoPlayBtn.setVisible(false);
+
+            playBtn.setText("Search!");
+            fieldSetup();
+        });
+        fieldSetup();
+    }
+
+    private void fieldSetup() {
         fieldController = new FieldController(ROWS,COLUMNS,SIZE);//Good combinations: 50,50,10 | 20,20,25 | 10,10,50
         GridPane field = fieldController.getField();
         onStyleWallClicked();
@@ -130,7 +203,7 @@ public class MainPageController {
         AnchorPane.setRightAnchor(field, 0.0);
 
 
-
+        body.getChildren().clear();
         body.getChildren().add(field);
     }
 }
