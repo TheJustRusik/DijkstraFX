@@ -11,7 +11,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -47,38 +46,59 @@ public class MainPageController {
     private int ROWS = 20, COLUMNS = 20, SIZE = 25;
     private Engine engine;
     private Timeline autoPlay;
+    boolean animationPlaying;
     @FXML
     private void onAutoPlayBtnClicked() {
-        if(autoPlayBtn.getStyle().contains("#01b075")) {
-            autoPlayBtn.setStyle("-fx-background-radius:50;-fx-background-color:#ea5645");
-            Duration duration = new Duration(animationSlider.getValue());
-            autoPlay = new Timeline(new KeyFrame(duration, actionEvent -> {
-                engine.nextIteration();
-                fieldController.updateFrame();
-            }));
-            autoPlay.setCycleCount(Timeline.INDEFINITE);
-            autoPlay.play();
-
+        if(animationPlaying) {
+            turnOffAnimation();
         }else {
-            autoPlayBtn.setStyle("-fx-background-radius:50;-fx-background-color:#01b075");
-            autoPlay.stop();
+            turnOnAnimation();
         }
     }
     @FXML
     private void onAnimationDelayChanged() {
         try {
-            autoPlay.stop();
-            Duration duration = new Duration(animationSlider.getValue());
-            autoPlay = new Timeline(new KeyFrame(duration, actionEvent -> {
-                engine.nextIteration();
-                fieldController.updateFrame();
-            }));
-            autoPlay.setCycleCount(Timeline.INDEFINITE);
-            autoPlay.play();
+            if (autoPlay != null)
+                autoPlay.stop();
+            createTimeLine();
+            if (animationPlaying)
+                autoPlay.play();
         }catch (Exception ignored) {
 
         }
 
+    }
+
+    private void createTimeLine() {
+        Duration duration = new Duration(animationSlider.getValue());
+        autoPlay = new Timeline(new KeyFrame(duration, actionEvent -> {
+            System.out.println("TimeLine: " + autoPlay.hashCode());
+            engine.nextIteration();
+            fieldController.updateFrame();
+            if (!engine.hasNextIteration()) {
+                turnOffAnimation();
+
+            }
+
+
+        }));
+        autoPlay.setCycleCount(Timeline.INDEFINITE);
+    }
+
+    private void turnOffAnimation() {
+        animationPlaying = false;
+        autoPlayBtn.setStyle("-fx-background-radius:50;-fx-background-color:#01b075");
+        autoPlay.stop();
+        autoPlay = null;
+
+    }
+    private void turnOnAnimation() {
+        animationPlaying = true;
+        autoPlayBtn.setStyle("-fx-background-radius:50;-fx-background-color:#ea5645");
+
+        createTimeLine();
+
+        autoPlay.play();
     }
     @FXML
     private void onNextBtnClicked() {
@@ -102,7 +122,8 @@ public class MainPageController {
             engine.launch();
         } else {
             fieldSetup();
-            autoPlay.stop();
+            if (autoPlay != null)
+                autoPlay.stop();
             autoPlayBtn.setStyle("-fx-background-radius:50;-fx-background-color:#01b075");
             nextBtn.setVisible(false);
             choiceBox.setDisable(false);
@@ -175,6 +196,7 @@ public class MainPageController {
 
 
     public void initialize() {
+        animationPlaying = false;
         animationSlider.valueProperty().addListener((observable, oldValue, newValue) -> onAnimationDelayChanged());
         ObservableList<Integer> choices = FXCollections.observableArrayList(5, 10, 20, 50 );
         choiceBox.setItems(choices);
