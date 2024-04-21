@@ -87,14 +87,14 @@ public class MainPageController {
 
     private void turnOffAnimation() {
         animationPlaying = false;
-        autoPlayBtn.setStyle("-fx-background-radius:50;-fx-background-color:#01b075");
+        autoPlayBtn.setStyle("-fx-font-family: 'Agency FB'; -fx-font-size: 25; -fx-background-radius:50;-fx-background-color:#01b075");
         autoPlay.stop();
         autoPlay = null;
 
     }
     private void turnOnAnimation() {
         animationPlaying = true;
-        autoPlayBtn.setStyle("-fx-background-radius:50;-fx-background-color:#ea5645");
+        autoPlayBtn.setStyle("-fx-font-family: 'Agency FB'; -fx-font-size: 25; -fx-background-radius:50;-fx-background-color:#ea5645");
 
         createTimeLine();
 
@@ -124,7 +124,7 @@ public class MainPageController {
             fieldSetup();
             if (autoPlay != null)
                 autoPlay.stop();
-            autoPlayBtn.setStyle("-fx-background-radius:50;-fx-background-color:#01b075");
+            autoPlayBtn.setStyle("-fx-font-family: 'Agency FB'; -fx-font-size: 25;-fx-background-radius:50;-fx-background-color:#01b075");
             nextBtn.setVisible(false);
             choiceBox.setDisable(false);
             autoPlayBtn.setVisible(false);
